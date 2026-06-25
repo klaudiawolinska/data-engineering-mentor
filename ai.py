@@ -41,16 +41,15 @@ whenever you're ready." Only do this after real engagement, not prematurely, and
 
 When they say they're done or want feedback, give a concise honest assessment."""
 
-SYSTEM_CHALLENGE_GEN = """You are a Staff Data Engineer generating realistic daily challenges.
-Output ONLY valid JSON — no markdown fences, no explanation.
+SYSTEM_CHALLENGE_GEN = """You are a data engineering mentor generating realistic daily challenges.
+Output ONLY valid JSON (no markdown fences, no explanation).
 
 Rules:
-- Based on real situations from production data engineering
-- Has concrete context (company type, scale, constraints)
-- Requires genuine reasoning, not recall
-- Appropriate for the skill level given
-- Solvable in 15-30 minutes of discussion
-- No trivial "write a SQL query" prompts — always add production context"""
+- Grounded in real data engineering work
+- Gives concrete context, scaled to the skill level
+- Makes the learner reason or decide, not just recall a definition
+- Match the scope, complexity, and assumed experience to the skill level given
+- Solvable in 15-30 minutes of discussion"""
 
 
 def pick_domain(skill_levels: list[dict], recent_domains: list[str]) -> str:
@@ -86,23 +85,34 @@ def _revisit_block(revisit_gap: str | None) -> str:
 def generate_challenge(domain: str, level: int,
                        revisit_gap: str | None = None) -> dict:
     level_desc = {
-        1: "junior-to-mid transition",
-        2: "mid-level practitioner",
-        3: "senior engineer",
-        4: "staff engineer",
-        5: "principal/architect",
-    }.get(min(level, 5), "senior engineer")
+        1: "beginner",
+        2: "junior",
+        3: "mid-level",
+        4: "senior",
+        5: "staff / principal",
+    }.get(min(level, 5), "mid-level")
+
+    complexity = {
+        1: "Foundational and tightly scoped: one concept or decision, a small simple "
+           "setting, minimal moving parts. Assume limited experience; a beginner should "
+           "be able to engage and learn.",
+        2: "A small, realistic task: one main idea and light constraints, not much ambiguity.",
+        3: "A realistic scenario with a couple of interacting constraints or a real trade-off.",
+        4: "A broad, open-ended scenario with several constraints, edge cases, and failure modes.",
+        5: "An ambiguous, architectural problem with competing constraints and second-order effects.",
+    }.get(min(level, 5), "A realistic scenario with a couple of interacting constraints.")
 
     revisit = _revisit_block(revisit_gap)
 
     prompt = f"""Generate a data engineering challenge for domain: {domain}
 Skill level: {level_desc} (level {level})
+Difficulty: {complexity}
 
 Return JSON with exactly these fields:
 {{
   "id": "unique-slug",
   "title": "Short title (max 8 words)",
-  "context": "2-3 sentence production scenario with company type, scale, constraints",
+  "context": "2-3 sentence scenario with a concrete setting and constraints, scaled to the level",
   "challenge": "The specific problem or decision they need to work through (2-4 sentences)",
   "hints": ["hint 1 if stuck", "hint 2 if still stuck"],
   "key_concepts": ["concept1", "concept2", "concept3"],
@@ -227,8 +237,8 @@ def assess_session(messages: list[dict], challenge: dict, level: int = 1) -> dic
     # "senior". Everyone starts a domain at level 1, so grading starts gentle and
     # gets stricter as the challenges (and the learner) level up.
     level_desc = {
-        1: "junior-to-mid", 2: "mid-level", 3: "senior", 4: "staff", 5: "principal",
-    }.get(min(level, 5), "junior-to-mid")
+        1: "beginner", 2: "junior", 3: "mid-level", 4: "senior", 5: "staff / principal",
+    }.get(min(level, 5), "beginner")
 
     conversation = "\n".join(
         f"{m['role'].upper()}: {m['content']}" for m in messages

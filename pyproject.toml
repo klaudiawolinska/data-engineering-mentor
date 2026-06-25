@@ -1,7 +1,7 @@
 [project]
 name = "data-engineering-mentor"
 version = "0.1.0"
-description = "AI-first daily practice environment for mid and senior data engineers — Socratic challenges, not a course."
+description = "AI-first daily practice environment for data engineers at every level — Socratic challenges, not a course."
 requires-python = ">=3.11"
 dependencies = [
     "streamlit>=1.35.0",

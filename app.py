@@ -243,15 +243,15 @@ if not st.session_state.user_id:
               fill="none" stroke-linecap="round"/></svg></span>
   </div>
   <p style="font-size:1.12rem;color:#3A4049;max-width:680px;margin-top:24px;line-height:1.55;">
-    A daily practice environment for mid and senior data engineers.
+    A daily practice environment for data engineers at every level.
     <strong>Not a course. Not a tutorial. A sparring partner</strong> that hands you
-    realistic production challenges and pushes your thinking.
+    realistic challenges and pushes your thinking.
   </p>
 </div>
 """
     features = [
         ("#E5F6ED", "#C3EAD5", "⚡", "Daily Challenge",
-         "Realistic production scenarios, sized to your level."),
+         "Realistic scenarios, sized to your level."),
         ("#FDF3D6", "#F8E5A6", "💬", "Socratic Mentor",
          "An AI mentor that asks, nudges and pushes back — never hands you the answer."),
         ("#FCE0EE", "#F6C6DF", "◈", "Skill Tree",

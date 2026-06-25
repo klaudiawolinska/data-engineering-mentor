@@ -1,12 +1,12 @@
 # ⚡ Data Engineering AI Mentor
 
-A daily practice environment for mid and senior data engineers. Not a course, not a tutorial — a sparring partner.
+A daily practice environment for data engineers at every level. Not a course, not a tutorial — a sparring partner.
 
-You get a realistic production challenge, work through it with a Socratic AI mentor that pushes your reasoning, then receive an honest assessment that feeds your skill tree and picks your next challenge.
+You get a realistic challenge sized to your level, work through it with a Socratic AI mentor that pushes your reasoning, then receive an honest assessment that feeds your skill tree and picks your next challenge.
 
 ## Core loop (15–30 min/day)
 
-1. **Daily Challenge** — production-grounded scenario, sized to your level
+1. **Daily Challenge** — a realistic scenario, sized to your level
 2. **Socratic conversation** — the mentor asks, nudges, pushes back; it doesn't hand you answers
 3. **Assessment** — honest score, strengths, gaps, next focus
 4. **Skill tree** — XP and levels across 26 domains

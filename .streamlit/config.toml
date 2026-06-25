@@ -1,0 +1,23 @@
+# Headless skips Streamlit's first-run interactive email prompt (which blocks
+# scripted launches). The app prints its URL; open it manually.
+[server]
+headless = true
+runOnSave = true
+
+# Don't phone home with usage telemetry.
+[browser]
+gatherUsageStats = false
+
+# Hide the developer toolbar (Deploy button, "..." menu) and its hotkeys —
+# this is what kills the "Clear caches" dialog that popped on Cmd+C.
+[client]
+toolbarMode = "minimal"
+
+# Light theme: white canvas, violet accent, soft violet-neutral secondary
+# surfaces. Fonts + finer styling live in app.py CSS.
+[theme]
+base = "light"
+primaryColor = "#7C3AED"
+backgroundColor = "#FFFFFF"
+secondaryBackgroundColor = "#F5F3FA"
+textColor = "#15161A"

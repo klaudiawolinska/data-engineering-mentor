@@ -90,6 +90,23 @@ h1, h2, h3, h4 {
 /* Sidebar */
 [data-testid="stSidebar"] { background: #FBFCFE; border-right: 1px solid #EEF2F7; }
 [data-testid="stSidebar"] h2 { font-size: 1.15rem; }
+
+/* Brand button -> looks like a heading, behaves like a logo link */
+[data-testid="stSidebar"] .st-key-brand_home button {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    justify-content: flex-start !important;
+}
+[data-testid="stSidebar"] .st-key-brand_home button p {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 800 !important;
+    font-size: 1.45rem !important;
+    letter-spacing: -0.02em !important;
+    color: #15161A !important;
+}
+[data-testid="stSidebar"] .st-key-brand_home button:hover p { color: #7C3AED !important; }
 </style>
 """
 st.markdown(_CSS, unsafe_allow_html=True)
@@ -134,6 +151,16 @@ def level_label(level: int) -> str:
     return labels.get(min(level, 5), "Principal")
 
 
+def logout():
+    """Clear identity + any in-progress session, returning to the login screen."""
+    for k in ("user_id", "user_name", "session_id", "challenge", "messages",
+              "session_done", "assessment", "new_achievements", "force_new",
+              "suggested_domain", "domain_choice", "last_revisit",
+              "rematch_bonus", "challenge_mode", "rematch_pick"):
+        st.session_state.pop(k, None)
+    st.session_state.view = "home"
+
+
 @st.cache_data(show_spinner=False)
 def _chip_labels(texts: tuple) -> dict:
     """Map each weak-spot text to a short chip label via the LLM, cached by the set
@@ -156,9 +183,10 @@ def domain_color(domain: str) -> str:
 # Sidebar
 
 with st.sidebar:
-    st.markdown("## 🦉 Data Engineering Mentor")
-
     if not st.session_state.user_id:
+        # Nudge the form down so "Who are you?" lines up with the big hero title,
+        # which sits below the main panel's top padding.
+        st.markdown("<div style='margin-top:2.6rem;'></div>", unsafe_allow_html=True)
         # A form so pressing Enter in the field submits, same as clicking Start.
         with st.form("login_form", clear_on_submit=False, border=False):
             st.markdown("**Who are you?**")
@@ -170,6 +198,13 @@ with st.sidebar:
             st.session_state.user_name = name.strip()
             st.rerun()
     else:
+        # Clickable brand mark (logged-in only — the logged-out screen has the big
+        # hero instead). Styled like a heading (see _CSS); acts like a site logo,
+        # returning to the very first screen by logging out, same as "Switch user".
+        if st.button("🦉 Data Engineering Mentor", key="brand_home", use_container_width=True):
+            logout()
+            st.rerun()
+
         uid = st.session_state.user_id
         streak = db.get_streak(uid)
         current = streak.get("current_streak", 0)
@@ -211,13 +246,7 @@ with st.sidebar:
 
         st.divider()
         if st.button("🔁 Switch user", key="logout", use_container_width=True, type="secondary"):
-            # Clear identity + any in-progress session, then return to the login screen.
-            for k in ("user_id", "user_name", "session_id", "challenge", "messages",
-                      "session_done", "assessment", "new_achievements", "force_new",
-                      "suggested_domain", "domain_choice", "last_revisit",
-                      "rematch_bonus", "challenge_mode", "rematch_pick"):
-                st.session_state.pop(k, None)
-            st.session_state.view = "home"
+            logout()
             st.rerun()
 
 
@@ -228,17 +257,17 @@ if not st.session_state.user_id:
 <div style="max-width:1000px;">
   <div style="font-family:'Poppins',sans-serif;font-weight:800;font-size:3.2rem;
               line-height:1.06;letter-spacing:-0.03em;color:#15161A;">
-    Data Engineering
+    🦉 Data Engineering
     <span style="position:relative;white-space:nowrap;">Mentor<svg width="100%" height="16"
         viewBox="0 0 320 16" preserveAspectRatio="none"
         style="position:absolute;left:0;bottom:-9px;overflow:visible;">
         <path d="M5 10 C 90 3, 200 3, 315 8" stroke="#7C3AED" stroke-width="7"
               fill="none" stroke-linecap="round"/></svg></span>
   </div>
-  <p style="font-size:1.12rem;color:#3A4049;max-width:680px;margin-top:24px;line-height:1.55;">
+  <p style="font-size:1.2rem;color:#3A4049;max-width:1000px;margin-top:24px;line-height:1.55;">
     A daily practice environment for data engineers at every level.
-    <strong>Not a course. Not a tutorial. A sparring partner</strong> that hands you
-    realistic challenges and pushes your thinking.
+    Talk to an <span style="color:#7C3AED;font-weight:600;">AI mentor</span> and
+    <strong>solve realistic challenges</strong> that push your thinking.
   </p>
 </div>
 """

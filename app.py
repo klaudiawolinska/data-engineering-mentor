@@ -11,7 +11,7 @@ from achievements import check_and_grant, ACHIEVEMENTS
 
 st.set_page_config(
     page_title="DE Mentor",
-    page_icon="⚡",
+    page_icon="🦉",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -142,20 +142,13 @@ def _chip_labels(texts: tuple) -> dict:
 
 
 def domain_color(domain: str) -> str:
-    """A stable, distinct color per domain, hashed from its name into the red-green
-    and purple-pink hue ranges (skipping blues) so nothing reads as blue."""
+    """A stable, muted tone per domain, hashed from its name into a narrow violet
+    band at low saturation so the skill tree reads as tonal variations of the violet
+    accent rather than a rainbow — distinct but cohesive with the rest of the UI."""
     h = int(hashlib.md5(domain.encode()).hexdigest(), 16)
-    arcs = [(0, 165), (285, 345)]
-    span = sum(hi - lo for lo, hi in arcs)
-    x = h % span
-    hue = arcs[0][0]
-    for lo, hi in arcs:
-        if x < hi - lo:
-            hue = lo + x
-            break
-        x -= (hi - lo)
-    sat = 0.60 + ((h >> 8) % 18) / 100.0      # 0.60–0.77
-    light = 0.52 + ((h >> 16) % 10) / 100.0   # 0.52–0.61
+    hue = 248 + (h % 44)                       # 248–291 (indigo → violet → plum)
+    sat = 0.22 + ((h >> 8) % 16) / 100.0       # 0.22–0.37
+    light = 0.46 + ((h >> 16) % 12) / 100.0    # 0.46–0.57
     r, g, b = colorsys.hls_to_rgb(hue / 360.0, light, sat)
     return f"#{int(r * 255):02X}{int(g * 255):02X}{int(b * 255):02X}"
 
@@ -163,7 +156,7 @@ def domain_color(domain: str) -> str:
 # Sidebar
 
 with st.sidebar:
-    st.markdown("## ⚡ Data Engineering Mentor")
+    st.markdown("## 🦉 Data Engineering Mentor")
 
     if not st.session_state.user_id:
         # A form so pressing Enter in the field submits, same as clicking Start.
@@ -662,19 +655,20 @@ elif view == "skills":
         level = skill["level"]
         xp = skill["xp"]
         xp_in_level = xp % 100
-        color = domain_color(domain)
 
         with col:
+            # Neutral card matching the achievements styling — the only accent is the
+            # violet progress fill, so the grid stays calm instead of color-coded.
             st.markdown(
-                f'<div style="border:1px solid {color}33;border-radius:14px;'
-                f'padding:14px 18px;margin-bottom:14px;background:{color}12;">'
+                f'<div style="border:1px solid #E6ECF5;border-radius:14px;'
+                f'padding:14px 18px;margin-bottom:14px;background:#FBFCFE;">'
                 f'<div style="display:flex;justify-content:space-between;align-items:center;">'
                 f'<span style="font-family:Poppins,sans-serif;font-weight:700;font-size:14px;'
                 f'color:#15161A;">{domain}</span>'
-                f'<span style="color:{color};font-size:12px;font-weight:700;">'
+                f'<span style="color:#6B7280;font-size:12px;font-weight:700;">'
                 f'L{level} · {level_label(level)}</span></div>'
                 f'<div style="background:#EAEEF4;border-radius:6px;height:6px;margin-top:10px;">'
-                f'<div style="background:{color};width:{xp_in_level}%;height:6px;border-radius:6px;"></div>'
+                f'<div style="background:#7C3AED;width:{xp_in_level}%;height:6px;border-radius:6px;"></div>'
                 f'</div>'
                 f'<div style="font-size:11px;color:#8A909A;margin-top:6px;">{xp} XP total</div>'
                 f'</div>',

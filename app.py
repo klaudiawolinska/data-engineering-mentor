@@ -601,6 +601,17 @@ elif view == "session":
         with st.chat_message(role):
             st.markdown(msg["content"])
 
+    # Empty state: a new learner reads the challenge up top and can miss the chat
+    # box pinned at the bottom. A mentor "welcome" bubble makes the input below it
+    # the natural next step. Display-only — nothing is saved to messages.
+    if not st.session_state.messages and not st.session_state.session_done:
+        with st.chat_message("assistant"):
+            st.markdown(
+                "👋 **Ready when you are.** Share your initial approach to this "
+                "challenge in the box below — even a rough plan — and we'll dig in "
+                "together."
+            )
+
     # Input
     if not st.session_state.session_done:
         placeholder = (
